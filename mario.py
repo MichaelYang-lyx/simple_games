@@ -30,7 +30,16 @@ class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.image = pygame.Surface((width, height))
-        self.image.fill(GREEN)
+        # Draw brick pattern
+        self.image.fill((139, 69, 19)) # Base brown color
+        brick_color = (160, 82, 45)
+        for i in range(0, width, 20):
+            for j in range(0, height, 20):
+                pygame.draw.rect(self.image, brick_color, (i, j, 18, 18))
+        
+        # Add grass on top
+        pygame.draw.rect(self.image, (34, 139, 34), (0, 0, width, 5))
+        
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -38,8 +47,14 @@ class Platform(pygame.sprite.Sprite):
 class Goal(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((40, 40))
-        self.image.fill(GOLD)
+        self.image = pygame.Surface((40, 40), pygame.SRCALPHA)
+        
+        # Draw a star shape
+        points = [(20, 0), (25, 15), (40, 15), (30, 25), (35, 40), 
+                  (20, 30), (5, 40), (10, 25), (0, 15), (15, 15)]
+        pygame.draw.polygon(self.image, GOLD, points)
+        pygame.draw.polygon(self.image, (218, 165, 32), points, 2) # Outline
+        
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -47,8 +62,20 @@ class Goal(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, distance):
         super().__init__()
-        self.image = pygame.Surface((30, 30))
-        self.image.fill(BROWN)
+        self.image = pygame.Surface((30, 30), pygame.SRCALPHA)
+        
+        # Draw a little monster (Goomba-like)
+        # Body
+        pygame.draw.circle(self.image, (139, 69, 19), (15, 15), 15)
+        # Eyes
+        pygame.draw.circle(self.image, WHITE, (10, 10), 5)
+        pygame.draw.circle(self.image, WHITE, (20, 10), 5)
+        pygame.draw.circle(self.image, BLACK, (10, 10), 2)
+        pygame.draw.circle(self.image, BLACK, (20, 10), 2)
+        # Feet
+        pygame.draw.ellipse(self.image, BLACK, (0, 20, 10, 10))
+        pygame.draw.ellipse(self.image, BLACK, (20, 20, 10, 10))
+        
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -65,8 +92,26 @@ class Enemy(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self, platforms, enemies, goal):
         super().__init__()
-        self.image = pygame.Surface((PLAYER_WIDTH, PLAYER_HEIGHT))
-        self.image.fill(PLAYER_COLOR)
+        self.image = pygame.Surface((PLAYER_WIDTH, PLAYER_HEIGHT), pygame.SRCALPHA)
+        
+        # Draw Mario-like character
+        # Head
+        pygame.draw.circle(self.image, (255, 200, 150), (20, 15), 10) # Face
+        pygame.draw.rect(self.image, RED, (10, 5, 20, 5)) # Hat
+        pygame.draw.rect(self.image, RED, (10, 5, 25, 3)) # Hat brim
+        
+        # Body
+        pygame.draw.rect(self.image, RED, (10, 25, 20, 20)) # Shirt
+        pygame.draw.rect(self.image, (0, 0, 255), (10, 35, 20, 15)) # Overalls
+        
+        # Arms
+        pygame.draw.rect(self.image, RED, (5, 25, 5, 15)) # Left arm
+        pygame.draw.rect(self.image, RED, (30, 25, 5, 15)) # Right arm
+        
+        # Legs
+        pygame.draw.rect(self.image, (0, 0, 255), (10, 50, 8, 10)) # Left leg
+        pygame.draw.rect(self.image, (0, 0, 255), (22, 50, 8, 10)) # Right leg
+        
         self.rect = self.image.get_rect()
         self.rect.x = 100
         self.rect.y = SCREEN_HEIGHT - PLAYER_HEIGHT - 100
